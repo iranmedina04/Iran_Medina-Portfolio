@@ -1,0 +1,262 @@
+main:	addi x2, x0, 0x0  #El delay cuenta hasta 10 para dar tiempo a que se envie el dato del uart
+	addi x3, x0, 0x1  #Valor de referencia de 10 para que el x2 pueda contar
+	
+######################################################################################## ascii H 0x48
+EnvioH:
+	addi x4, x0, 0x20   #Direccion para guardar el dato
+	slli x4, x4, 8	    #Corrimiento de 8 bits 
+	addi x4, x4, 0x18   #Agrega el valor de la direccion restante 
+	addi x1, x0, 0x48   #Pone el ascii de la H en un registro
+	sw   x1, (x4)       #Guarda la H
+	
+	addi x4, x0, 0x20   #Direccion para guardar la instruccion
+	slli x4, x4, 8      #Corrimiento de 8 bits
+	addi x4, x4, 0x10   #Agrega el valor de la direccion restante
+	addi x1, x0, 0x1    #Guarda el valor del send en un registro
+	sw   x1, (x4)       #Guarda el send en el registro de control
+	
+EsperaSendH:
+	addi x4, x0, 0x20   #Direccion para revisar que el send sea 0
+	slli x4, x4, 8      #Corrimiento de 8 bits
+	addi x4, x4, 0x10   #Segunda parte de la direccion
+
+	lw   x1, (x4)       #Carga el dato del registro de control
+	and  x2, x1, x3     #Hace un and con un 1 para verificar si el send ya es 0
+	beq  x2, x0, EnvioO #Verfifica que el send sea 0 para pasar al envio de la siguiente letra
+	b    EsperaSendH    #Si el send no es 0 entonces regresa al loop de esperasend.
+	
+	
+
+######################################################################################## ascii O 0x6F
+EnvioO:
+	addi x4, x0, 0x20   #Direccion para guardar el dato
+	slli x4, x4, 8	    #Corrimiento de 8 bits 
+	addi x4, x4, 0x18   #Agrega el valor de la direccion restante 
+	addi x1, x0, 0x6F   #Pone el ascii de la O en un registro
+	sw   x1, (x4)       #Guarda la O
+	
+	addi x4, x0, 0x20   #Direccion para guardar la instruccion
+	slli x4, x4, 8      #Corrimiento de 8 bits
+	addi x4, x4, 0x10   #Agrega el valor de la direccion restante
+	addi x1, x0, 0x1    #Guarda el valor del send en un registro
+	sw   x1, (x4)       #Guarda el send en el registro de control
+	
+EsperaSendO:
+
+	addi x4, x0, 0x20   #Direccion para revisar que el send sea 0
+	slli x4, x4, 8      #Corrimiento de 8 bits
+	addi x4, x4, 0x10   #Segunda parte de la direccion
+
+	lw   x1, (x4)       #Carga el dato del registro de control
+	and  x2, x1, x3     #Hace un and con un 1 para verificar si el send ya es 0
+	beq  x2, x0, EnvioL #Verfifica que el send sea 0 para pasar al envio de la siguiente letra
+	b    EsperaSendO    #Si el send no es 0 entonces regresa al loop de esperasend.
+	
+######################################################################################## ascii L 0x6C
+EnvioL:
+	addi x4, x0, 0x20   #Direccion para guardar el dato
+	slli x4, x4, 8	    #Corrimiento de 8 bits 
+	addi x4, x4, 0x18   #Agrega el valor de la direccion restante 
+	addi x1, x0, 0x6C   #Pone el ascii de la L en un registro
+	sw   x1, (x4)       #Guarda la L
+	
+	addi x4, x0, 0x20   #Direccion para guardar la instruccion
+	slli x4, x4, 8      #Corrimiento de 8 bits
+	addi x4, x4, 0x10   #Agrega el valor de la direccion restante
+	addi x1, x0, 0x1    #Guarda el valor del send en un registro
+	sw   x1, (x4)       #Guarda el send en el registro de control
+
+	
+EsperaSendL:
+
+	addi x4, x0, 0x20   #Direccion para revisar que el send sea 0
+	slli x4, x4, 8      #Corrimiento de 8 bits
+	addi x4, x4, 0x10   #Segunda parte de la direccion
+
+	lw   x1, (x4)       #Carga el dato del registro de control
+	and  x2, x1, x3     #Hace un and con un 1 para verificar si el send ya es 0
+	beq  x2, x0, EnvioA #Verfifica que el send sea 0 para pasar al envio de la siguiente letra
+	b    EsperaSendL    #Si el send no es 0 entonces regresa al loop de esperasend.
+	
+######################################################################################## ascii A 0x61
+	
+EnvioA:
+	addi x4, x0, 0x20   #Direccion para guardar el dato
+	slli x4, x4, 8	    #Corrimiento de 8 bits 
+	addi x4, x4, 0x18   #Agrega el valor de la direccion restante 
+	addi x1, x0, 0x61   #Pone el ascii de la A en un registro
+	sw   x1, (x4)       #Guarda la A
+	
+	addi x4, x0, 0x20   #Direccion para guardar la instruccion
+	slli x4, x4, 8      #Corrimiento de 8 bits
+	addi x4, x4, 0x10   #Agrega el valor de la direccion restante
+	addi x1, x0, 0x1    #Guarda el valor del send en un registro
+	sw   x1, (x4)       #Guarda el send en el registro de control
+	
+EsperaSendA:
+	addi x4, x0, 0x20   #Direccion para revisar que el send sea 0
+	slli x4, x4, 8      #Corrimiento de 8 bits
+	addi x4, x4, 0x10   #Segunda parte de la direccion
+
+	lw   x1, (x4)       #Carga el dato del registro de control
+	and  x2, x1, x3     #Hace un and con un 1 para verificar si el send ya es 0
+	beq  x2, x0, Envioesp #Verfifica que el send sea 0 para pasar al envio de la siguiente letra
+	b    EsperaSendA    #Si el send no es 0 entonces regresa al loop de esperasend.
+	
+
+	
+######################################################################################## ascii _ 0x20
+	
+Envioesp:
+	addi x4, x0, 0x20   #Direccion para guardar el dato
+	slli x4, x4, 8	    #Corrimiento de 8 bits 
+	addi x4, x4, 0x18   #Agrega el valor de la direccion restante 
+	addi x1, x0, 0x20   #Pone el ascii deL ESPACIO en un registro
+	sw   x1, (x4)       #Guarda el ESPACIO
+	
+	addi x4, x0, 0x20   #Direccion para guardar la instruccion
+	slli x4, x4, 8      #Corrimiento de 8 bits
+	addi x4, x4, 0x10   #Agrega el valor de la direccion restante
+	addi x1, x0, 0x1    #Guarda el valor del send en un registro
+	sw   x1, (x4)       #Guarda el send en el registro de control
+	
+EsperaSendesp:
+	addi x4, x0, 0x20   #Direccion para revisar que el send sea 0
+	slli x4, x4, 8      #Corrimiento de 8 bits
+	addi x4, x4, 0x10   #Segunda parte de la direccion
+
+	lw   x1, (x4)       #Carga el dato del registro de control
+	and  x2, x1, x3     #Hace un and con un 1 para verificar si el send ya es 0
+	beq  x2, x0, EnvioM #Verfifica que el send sea 0 para pasar al envio de la siguiente letra
+	b    EsperaSendesp    #Si el send no es 0 entonces regresa al loop de esperasend.
+
+	
+######################################################################################## ascii M 0x6D
+EnvioM:
+	addi x4, x0, 0x20   #Direccion para guardar el dato
+	slli x4, x4, 8	    #Corrimiento de 8 bits 
+	addi x4, x4, 0x18   #Agrega el valor de la direccion restante 
+	addi x1, x0, 0x6D   #Pone el ascii de la M en un registro
+	sw   x1, (x4)       #Guarda la M
+	
+	addi x4, x0, 0x20   #Direccion para guardar la instruccion
+	slli x4, x4, 8      #Corrimiento de 8 bits
+	addi x4, x4, 0x10   #Agrega el valor de la direccion restante
+	addi x1, x0, 0x1    #Guarda el valor del send en un registro
+	sw   x1, (x4)       #Guarda el send en el registro de control
+	
+EsperaSendM:
+	addi x4, x0, 0x20   #Direccion para revisar que el send sea 0
+	slli x4, x4, 8      #Corrimiento de 8 bits
+	addi x4, x4, 0x10   #Segunda parte de la direccion
+
+	lw   x1, (x4)       #Carga el dato del registro de control
+	and  x2, x1, x3     #Hace un and con un 1 para verificar si el send ya es 0
+	beq  x2, x0, EnvioU #Verfifica que el send sea 0 para pasar al envio de la siguiente letra
+	b    EsperaSendM    #Si el send no es 0 entonces regresa al loop de esperasend.
+	
+
+######################################################################################## ascii U 0x75
+EnvioU:
+	addi x4, x0, 0x20   #Direccion para guardar el dato
+	slli x4, x4, 8	    #Corrimiento de 8 bits 
+	addi x4, x4, 0x18   #Agrega el valor de la direccion restante 
+	addi x1, x0, 0x75   #Pone el ascii de la U en un registro
+	sw   x1, (x4)       #Guarda la U
+	
+	addi x4, x0, 0x20   #Direccion para guardar la instruccion
+	slli x4, x4, 8      #Corrimiento de 8 bits
+	addi x4, x4, 0x10   #Agrega el valor de la direccion restante
+	addi x1, x0, 0x1    #Guarda el valor del send en un registro
+	sw   x1, (x4)       #Guarda el send en el registro de control
+	
+EsperaSendU:
+	addi x4, x0, 0x20   #Direccion para revisar que el send sea 0
+	slli x4, x4, 8      #Corrimiento de 8 bits
+	addi x4, x4, 0x10   #Segunda parte de la direccion
+
+	lw   x1, (x4)       #Carga el dato del registro de control
+	and  x2, x1, x3     #Hace un and con un 1 para verificar si el send ya es 0
+	beq  x2, x0, EnvioN #Verfifica que el send sea 0 para pasar al envio de la siguiente letra
+	b    EsperaSendU    #Si el send no es 0 entonces regresa al loop de esperasend.
+	
+######################################################################################## ascii N 0x6E
+EnvioN:
+	addi x4, x0, 0x20   #Direccion para guardar el dato
+	slli x4, x4, 8	    #Corrimiento de 8 bits 
+	addi x4, x4, 0x18   #Agrega el valor de la direccion restante 
+	addi x1, x0, 0x6E   #Pone el ascii de la N en un registro
+	sw   x1, (x4)       #Guarda la N
+	
+	addi x4, x0, 0x20   #Direccion para guardar la instruccion
+	slli x4, x4, 8      #Corrimiento de 8 bits
+	addi x4, x4, 0x10   #Agrega el valor de la direccion restante
+	addi x1, x0, 0x1    #Guarda el valor del send en un registro
+	sw   x1, (x4)       #Guarda el send en el registro de control
+	
+EsperaSendN:
+	addi x4, x0, 0x20   #Direccion para revisar que el send sea 0
+	slli x4, x4, 8      #Corrimiento de 8 bits
+	addi x4, x4, 0x10   #Segunda parte de la direccion
+
+	lw   x1, (x4)       #Carga el dato del registro de control
+	and  x2, x1, x3     #Hace un and con un 1 para verificar si el send ya es 0
+	beq  x2, x0, EnvioD #Verfifica que el send sea 0 para pasar al envio de la siguiente letra
+	b    EsperaSendN    #Si el send no es 0 entonces regresa al loop de esperasend.
+	
+
+######################################################################################## ascii D 0x64
+	
+EnvioD:
+	addi x4, x0, 0x20   #Direccion para guardar el dato
+	slli x4, x4, 8	    #Corrimiento de 8 bits 
+	addi x4, x4, 0x18   #Agrega el valor de la direccion restante 
+	addi x1, x0, 0x64   #Pone el ascii de la D en un registro
+	sw   x1, (x4)       #Guarda la D
+	
+	addi x4, x0, 0x20   #Direccion para guardar la instruccion
+	slli x4, x4, 8      #Corrimiento de 8 bits
+	addi x4, x4, 0x10   #Agrega el valor de la direccion restante
+	addi x1, x0, 0x1    #Guarda el valor del send en un registro
+	sw   x1, (x4)       #Guarda el send en el registro de control
+	
+EsperaSendD:
+	addi x4, x0, 0x20   #Direccion para revisar que el send sea 0
+	slli x4, x4, 8      #Corrimiento de 8 bits
+	addi x4, x4, 0x10   #Segunda parte de la direccion
+
+	lw   x1, (x4)       #Carga el dato del registro de control
+	and  x2, x1, x3     #Hace un and con un 1 para verificar si el send ya es 0
+	beq  x2, x0, EnvioOF #Verfifica que el send sea 0 para pasar al envio de la siguiente letra
+	b    EsperaSendD    #Si el send no es 0 entonces regresa al loop de esperasend.
+	
+
+	
+######################################################################################## ascii O 0x6F
+	
+EnvioOF:
+	addi x4, x0, 0x20   #Direccion para guardar el dato
+	slli x4, x4, 8	    #Corrimiento de 8 bits 
+	addi x4, x4, 0x18   #Agrega el valor de la direccion restante 
+	addi x1, x0, 0x6F   #Pone el ascii de la O en un registro
+	sw   x1, (x4)       #Guarda la O
+	
+	addi x4, x0, 0x20   #Direccion para guardar la instruccion
+	slli x4, x4, 8      #Corrimiento de 8 bits
+	addi x4, x4, 0x10   #Agrega el valor de la direccion restante
+	addi x1, x0, 0x1    #Guarda el valor del send en un registro
+	sw   x1, (x4)       #Guarda el send en el registro de control
+	
+EsperaSendOF:
+	addi x4, x0, 0x20   #Direccion para revisar que el send sea 0
+	slli x4, x4, 8      #Corrimiento de 8 bits
+	addi x4, x4, 0x10   #Segunda parte de la direccion
+
+	lw   x1, (x4)       #Carga el dato del registro de control
+	and  x2, x1, x3     #Hace un and con un 1 para verificar si el send ya es 0
+	beq  x2, x0, DONE #Verfifica que el send sea 0 para pasar al envio de la siguiente letra
+	b    EsperaSendOF    #Si el send no es 0 entonces regresa al loop de esperasend.
+
+################################################################################ Final del codigo
+DONE:
+	beq x0, x0, DONE
